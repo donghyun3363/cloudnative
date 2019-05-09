@@ -9,6 +9,7 @@ github.com을 사용하기 위해서는 계정이 필요하다.
 http://github.com 에 접속하여 계정을 만들도록 한다.
 
 계정을 만들면 다음과 같은 화면이 보인다.
+
 ![](images/git1.png)
 
 
@@ -39,12 +40,14 @@ https://git-scm.com/ 에서 다운로드 받을 수 있으며 윈도우즈에서
 ## git clone {repository address}
 
 맨 처음 git repository에서 소스를 로컬 디스크로 복제하는 명령이다. 실행하면 다음과 같다
+
 ~~~
 $ git clone https://github.com/jonggyou/project1
 
 Cloning into 'project1'...
 warning: You appear to have cloned an empty repository.
 ~~~
+
 기존에 만들었던 repository에 아무런 파일도 포함되지 않아서 현재 디렉토리에서 파일 리스트를 보면 project1 이라는 빈 디렉토리가 생성된걸 확인할 수 있다.
 
 ## git add
@@ -58,11 +61,13 @@ README.md 파일은 기본적으로 repository에서 해당 파일의 내용이 
 md 파일은 Mark Down 의 약자로 html 보다 간편하게 작성하는 로직을 가진 언어이다. 자세한 것은 https://www.markdownguide.org/ 에서 확인하면 된다.
 
 README.md 파일에 다음과 같은 내용을 쓰고 저장 한다.
+
 ~~~
 the first project
 ~~~
 
 git 은 상태에 따라 관리를 한다.
+
 ![](images/git5.png)
 
 git add 명령어를 통하여 staged 상태 만든다.
@@ -72,6 +77,7 @@ $ git add README.md
 ~~~
 
 현재 디렉토리의 모든 파일을 staged 상태로 만들기 위해서는 다음과 같이 명령한다.
+
 ~~~
 $ git add .
 ~~~
@@ -79,6 +85,7 @@ $ git add .
 ## git status
 
 현재의 상태를 보기 위해서 git status 명령을 한다.
+
 ~~~
 $ git status
 
@@ -96,6 +103,7 @@ Changes to be committed:
 아직 commit 된 파일은 없고 commit 될 새로운 파일 README.md 가 존재함을 알 수 있다.
 
 짤막하게 확인 하려면 다음과 같이 옵션을 준다.
+
 ~~~
 $ git status -s
 
@@ -134,6 +142,7 @@ git repository는 일반적으로 한 사람만 업데이트 하는 저장소가
 그래서 각 커밋에 대한 오너쉽을 가지기 때문에 커밋하는 주체의 email 과 name 이 필요하다.
 
 자신만의 email과 name을 설정해 준다.
+
 ~~~
 $ git config --global user.email "shiftyou@gmail.com"
 $ git config --global user.name "Jonggyou Kim"
@@ -144,11 +153,13 @@ $ git config --global user.name "Jonggyou Kim"
 커밋 할 때마다 이러한 에디터가 나와서 코멧트를 넣는 수고를 덜기 위해서 옵션을 사용한다.
 
 먼저 Ctrl-x 를 눌러 현재 nano 에디터를 빠져나온다. 아무런 코멘트를 달지 않았기 때문에 다음과 같은 메시지를 내면서 git commit 명령어는 무시된다.
+
 ~~~
 Aborting commit due to empty commit message.
 ~~~
 
 다음과 같이 커밋을 한다.
+
 ~~~
 $ git commit -m 'initial'
 
@@ -156,6 +167,7 @@ $ git commit -m 'initial'
  1 file changed, 1 insertion(+)
  create mode 100644 README.md
 ~~~
+
 커밋이 완료됨을 알 수 있다.
 
 이 상태는 로컬의 git 에서 commit 이 됨을 의미한다. 여러사람이 같이 공유하는 git repository에는 아직 해당 파일이 존재하지 않고 있다.
@@ -170,6 +182,7 @@ $ git push
 
 Username for 'https://github.com': 
 ~~~
+
 처음 "git push" 명령을 내리면 github.com 의 계정을 묻는 화면이 나타난다.
 
 이 화면에서 계정의 username 과 password를 입력해도 되고, "git login" 명령을 미리 써서 로그인을 해 두어도 된다.
