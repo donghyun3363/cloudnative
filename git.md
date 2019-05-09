@@ -210,6 +210,5 @@ To https://github.com/jonggyou/project1
 화면에서 보는 바와 같이 README.md 파일이 존재하고 initial 이라는 코멘트로 갱신됨을 알 수 있다.
 
 그리고 README.md 파일의 내용은 아래에서 볼 수 있다.
-
 ---
 이로써 git 에 대한 간락한 테스트가 완료되었다.
