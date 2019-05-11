@@ -144,7 +144,7 @@ git repository는 일반적으로 한 사람만 업데이트 하는 저장소가
 자신만의 email과 name을 설정해 준다.
 
 ~~~
-$ git config --global user.email "shiftyou@gmail.com"
+$ git config --global user.email "kimjonggyou@gmail.com"
 $ git config --global user.name "Jonggyou Kim"
 ~~~
 
