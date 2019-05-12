@@ -566,19 +566,3 @@ AH00558: httpd: Could not reliably determine the server's fully qualified domain
 ~~~
 
 컨테이너에서 발생하는 로그나 오류메시지를 볼 때 사용된다.
-
-# Jenkins에서 Docker 이용
-
-~~~
-pipeline {
-    agent { dockerfile true }
-    stages {
-        stage('Test') {
-            steps {
-                sh 'node --version'
-                sh 'svn --version'
-            }
-        }
-    }
-}
-~~~
