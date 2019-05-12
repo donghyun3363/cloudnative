@@ -371,10 +371,85 @@ Error response from daemon: conflict: unable to remove repository reference "htt
 
 # docker exec
 
+컨테이너 안의 실행파일을 수행하는 명령어이다.
+mysql을 컨테이너로 시작하고, sql을 수행하기 위해서 다음과 같이 할 수 있다.
+
+mysql은 docker.com에서 살펴보면 다음과 같다.
+
+![](images/docker8.png)
+
+mysql 컨테이너의 실행은 다음과 같이 한다.
+~~~
+$ docker run --name mydb -e MYSQL_ROOT_PASSWORD=mypassword -d mysql:5
+
+Unable to find image 'mysql:5' locally
+5: Pulling from library/mysql
+743f2d6c1f65: Already exists 
+3f0c413ee255: Pull complete 
+aef1ef8f1aac: Pull complete 
+f9ee573e34cb: Pull complete 
+3f237e01f153: Pull complete 
+f9da32e8682a: Pull complete 
+4b8da52fb357: Pull complete 
+6f38e9cfd49b: Pull complete 
+9f4834b3f44f: Pull complete 
+af631d92fdba: Pull complete 
+0e771ddab25c: Pull complete 
+Digest: sha256:196fe3e00d68b2417a8cf13482bdab1fcc2b32cf7c7575d0906c700688b352b4
+Status: Downloaded newer image for mysql:5
+574e3cb58480994e6995edd2ead4b6a6daa8b624b5b4f435502e4c853a0e91c0
+~~~
+
+잘 실행되고 있는지 살펴본다.
+
+~~~
+$ docker ps
+
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                 NAMES
+574e3cb58480        mysql:5             "docker-entrypoint.s…"   2 minutes ago       Up 2 minutes        3306/tcp, 33060/tcp   mydb
+~~~
+
+컨테이너에 접속하기 위해서 다음과같이 수행한다.
+
+~~~
+$ docker exec -it {컨테이너명} {명령어}
+~~~
+
+- -i: interactive라는 뜻으로, 컨테이너와 상호적으로 주고받고 하겠다는 뜻
+- -t: tty라는 뜻으로 tty를 사용하겠다는 뜻이다. (합해서 -it 로 옵션을 준다)
+
+~~~
+$ docker exec -it mydb bash
+
+root@574e3cb58480:/# ls
+bin  boot  dev	docker-entrypoint-initdb.d  entrypoint.sh  etc	home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+
+root@574e3cb58480:/# mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 3
+Server version: 5.7.26 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2019, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> 
+~~~
+
+위와같이 컨테이너 내부의 명령어를 실행 할 수 있다.
 
 
 # DockerFile 설명
 
+지금까지는 이미 만들어져 있는 이미지를 사용하였다.
+이번에는 나만의 새로운 이미지를 만드는 작업이다.
+
+애플리케이션을 만들거나 나만을 위한 설정이 담긴 이미지를 만들기 위해서 Dockerfile을 만든다.
 Dockerfile은 docker image를 만들기 위한 설정파일이다.  
 아래는 아주 짧은 Dockerfile의 예이다.
 
@@ -400,6 +475,7 @@ CMD echo "hello world"
 
 
 다음은 다른 Dockerfile의 예제이다.
+
 ~~~dockerfile
 from node:8
 run mkdir -p /usr/src/app
@@ -422,6 +498,8 @@ cmd ["npm", "start"]
 
 이다.
 
+위와같이 Dockerfile 안에는 어떤 이미지를 기본으로 어떠한 변화를 줄 것이고 어떤 명령을 할 것인가를 담고 있다.  
+이젠 이 Dockerfile로 이미지를 만들 차례이다.
 
 # docker build
 
