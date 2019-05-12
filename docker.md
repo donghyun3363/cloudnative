@@ -204,9 +204,7 @@ AH00558: httpd: Could not reliably determine the server's fully qualified domain
 웹브라우저를 통해 localhost:9090 을 접속해 보면 다음과 같이 나타난다.
 >VM에서 수행한다.
 
-<kbd>
 ![](images/docker6.png)
-</kbd>
 
 -v 옵션으로 httpd가 바라보는 root 가 호스트 컴퓨터의 현재 디렉토리이다. 화면에는 현재 디렉토리의 리스트들이 보여지는데, 이는 index 파일이 없어서 보이는 것이다.  index 파일을 만들도록 한다.
 
@@ -217,9 +215,7 @@ echo 'Welcome docker httpd' > index.html
 
 웹브라우저에서 reload를 하면 다음과 같이 index.html 의 내용이 보일 것이다.
 
-<kbd>
 ![](images/docker7.png)
-</kbd>
 
 # docker ps
 
