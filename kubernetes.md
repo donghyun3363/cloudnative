@@ -336,7 +336,7 @@ NAME               DESIRED   CURRENT   READY   AGE
 hello-56cd858d87   1         1         0       19m
 ~~~
 
-# kubectl describe rs {RC이름}
+# kubectl describe rs {ReplicaSet이름}
 
 ReplicaSet에 대한 자세한 정보가 나타난다.
 ~~~
@@ -727,37 +727,115 @@ Hello World!hello-deployment-769d4b96f5-mcgkd
 
 # Label
 
-## kubectl get po --show-labels
-## kubectl get po -l app,mode
-## #kubectl get po -l app=account
-## kubectl get po -l '!mode'
+- kubectl get po --show-labels
+- kubectl get po -l app,mode
+- kubectl get po -l app=account
+- kubectl get po -l '!mode'
 
-## kubectl label po hello-world app=ui
-## kubectl label po hello-world app=ui --overwrite
-## kubectl label node oke-hellow-123-481274-hokf gpu=true
-## kubectl get nodes -l gpu=true
-## kubectl delete po -l mode=dev
+- kubectl label po hello-world app=ui
+- kubectl label po hello-world app=ui --overwrite
+- kubectl label node oke-hellow-123-481274-hokf gpu=true
+- kubectl get nodes -l gpu=true
+- kubectl delete po -l mode=dev
+
+~~~
+$ kubectl get po --show-labels
+
+NAME                                READY   STATUS    RESTARTS   AGE   LABELS
+hello-deployment-769d4b96f5-552ff   1/1     Running   0          14m   pod-template-hash=769d4b96f5,run=hello
+hello-deployment-769d4b96f5-mcgkd   1/1     Running   0          74m   pod-template-hash=769d4b96f5,run=hello
+hello-deployment-769d4b96f5-t6fq4   1/1     Running   0          14m   pod-template-hash=769d4b96f5,run=hello
+~~~
+
+~~~
+$ kubectl get po -l run
+
+NAME                                READY   STATUS    RESTARTS   AGE
+hello-deployment-769d4b96f5-552ff   1/1     Running   0          14m
+hello-deployment-769d4b96f5-mcgkd   1/1     Running   0          74m
+hello-deployment-769d4b96f5-t6fq4   1/1     Running   0          14m
+~~~
+
+~~~
+$ kubectl label po hello-deployment-769d4b96f5-552ff name=app1
+
+pod/hello-deployment-769d4b96f5-552ff labeled
+~~~
+
+~~~
+$ kubectl label po hello-deployment-769d4b96f5-mcgkd name=app2
+
+pod/hello-deployment-769d4b96f5-mcgkd labeled
+~~~
+
+~~~
+$ kubectl get po -l name
+
+NAME                                READY   STATUS    RESTARTS   AGE
+hello-deployment-769d4b96f5-552ff   1/1     Running   0          16m
+hello-deployment-769d4b96f5-mcgkd   1/1     Running   0          75m
+~~~
+
+~~~
+$ kubectl get po -l '!name'
+
+NAME                                READY   STATUS    RESTARTS   AGE
+hello-deployment-769d4b96f5-t6fq4   1/1     Running   0          16m
+~~~
+
+~~~
+$ kubectl get po -l name=app1
+
+NAME                                READY   STATUS    RESTARTS   AGE
+hello-deployment-769d4b96f5-552ff   1/1     Running   0          16m
+~~~
 
 
 # Namespace
 
-## kubectl get ns
-## kubectl get po --namespace myns
-## kubectl get po -n myns
+- kubectl get ns
+- kubectl get po --namespace myns
+- kubectl get po -n myns
 
-## kubectl create namespace myns
-## kubectl delete ns myns
-## kubectl create -f hello-world.yaml -n test-namespace
-## kubectl get po -n test
+- kubectl create namespace myns
+- kubectl delete ns myns
+- kubectl create -f hello-world.yaml -n test-namespace
+- kubectl get po -n test
 
 
-## kubectl delete all --all
-## kubectl delete all --all -n myns
+- kubectl delete all --all
+- kubectl delete all --all -n myns
 
-# kubectl create -f myrc.yaml
-# kubectl get rc
-# kubectl edit rc myrc
+~~~
+$ kubectl get ns
+NAME              STATUS   AGE
+default           Active   2d20h
+kube-node-lease   Active   2d20h
+kube-public       Active   2d20h
+kube-system       Active   2d20h
 
-# kubectl delete rc myrc
-# kubectl delete rc myrc --cascade=false
+$ kubectl get po --namespace default
+NAME                                READY   STATUS    RESTARTS   AGE
+hello-deployment-769d4b96f5-552ff   1/1     Running   0          19m
+hello-deployment-769d4b96f5-mcgkd   1/1     Running   0          79m
+hello-deployment-769d4b96f5-t6fq4   1/1     Running   0          19m
+
+$ kubectl get po -n default
+NAME                                READY   STATUS    RESTARTS   AGE
+hello-deployment-769d4b96f5-552ff   1/1     Running   0          19m
+hello-deployment-769d4b96f5-mcgkd   1/1     Running   0          79m
+hello-deployment-769d4b96f5-t6fq4   1/1     Running   0          19m
+
+$ kubectl get po -n kube-system
+NAME                               READY   STATUS             RESTARTS   AGE
+coredns-fb8b8dccf-x85pq            0/1     CrashLoopBackOff   118        2d20h
+coredns-fb8b8dccf-zlzls            0/1     CrashLoopBackOff   117        2d20h
+etcd-minikube                      1/1     Running            4          2d20h
+kube-addon-manager-minikube        1/1     Running            4          2d20h
+kube-apiserver-minikube            1/1     Running            4          2d20h
+kube-controller-manager-minikube   1/1     Running            14         2d20h
+kube-proxy-vtczr                   1/1     Running            3          2d8h
+kube-scheduler-minikube            1/1     Running            4          2d20h
+storage-provisioner                1/1     Running            6          2d20h
+~~~
 
