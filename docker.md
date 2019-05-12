@@ -145,6 +145,7 @@ AH00558: httpd: Could not reliably determine the server's fully qualified domain
 [Sat May 11 08:41:51.771929 2019] [mpm_event:notice] [pid 1:tid 139803237498944] AH00489: Apache/2.4.39 (Unix) configured -- resuming normal operations
 [Sat May 11 08:41:51.772109 2019] [core:notice] [pid 1:tid 139803237498944] AH00094: Command line: 'httpd -D FOREGROUND'
 ~~~
+
 hello-world 와 마찬가지로 이미지를 pulling 한다.  
 이번에는 5개의 이미지를 pulling 하는 것을 볼 수 있다. 이것은 도커 이미지가 레이어로 되어있어 각 레이어를 pulling 한 것이다.
 하지만, 접속을 몇번포트로 해야 하는지 알 수 없다. 그래서 일단, Ctrl-C 를 눌러 중지한다.
@@ -188,7 +189,9 @@ Options:
 - -v : 볼륨 마운트
 
 그래서 다음과 같이 httpd 를 수행한다.
+
 >8080 포트는 jenkins이 사용하고 있어 9090으로 변경
+
 ~~~
 $ docker run -d --name myhttpd -p 9090:80 -v $PWD:/usr/local/apache2/htdocs/ httpd
 
@@ -374,6 +377,7 @@ Error response from daemon: conflict: unable to remove repository reference "htt
 
 Dockerfile은 docker image를 만들기 위한 설정파일이다.  
 아래는 아주 짧은 Dockerfile의 예이다.
+
 ~~~dockerfile
 FROM busybox
 CMD echo "hello world"
@@ -422,11 +426,14 @@ cmd ["npm", "start"]
 # docker build
 
 Dockerfile로 부터 docker image 를 만드는 명령어이다.
+
 ~~~dockerfile
 FROM busybox
 CMD echo "hello world"
 ~~~
+
 위의  Dockerfile을 사용하여 hello라는 이름의 image를 만들어 보자.
+
 ~~~
 $ docker build -t hello .
 
