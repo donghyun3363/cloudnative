@@ -469,41 +469,295 @@ $ kubectl get pods
 No resources found.
 ~~~
 
-# kubectl get po --show-labels
-# kubectl get po -l app,mode
-# kubectl get po -l app=account
-# kubectl get po -l '!mode'
+# Deployment 생성
 
-# kubectl label po hello-world app=ui
-# kubectl label po hello-world app=ui --overwrite
-# kubectl label node oke-hellow-123-481274-hokf gpu=true
-# kubectl get nodes -l gpu=true
+기존에 생성한 jonggyou/hello 이미지를 이용하여 실습을 해 본다.
 
-# kubectl create -f hello-world-gpu.yaml
-# kubectl delete po -l mode=dev
-# kubectl get ns
-# kubectl get po --namespace myns
-# kubectl get po -n myns
+CLI를 이용하여 deployment를 생성한다.
+~~~
+$ kubectl create deployment hello --image=jonggyou/hello
+deployment.apps/hello created
+~~~
 
-# kubectl create namespace myns
-# kubectl delete ns myns
-# kubectl create -f hello-world.yaml -n test-namespace
-# kubectl get po -n test
-# kubectl delete all --all
-# kubectl delete all --all -n myns
+다음과 같이 yaml 파일로 생성할 수도 있다. 먼저 hello-deploy.yaml을 만든다.  
+
+hello-deploy.yaml
+~~~
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: hello-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: hello
+    spec:
+      containers:
+      - name: hello
+        image: jonggyou/hello:latest
+        ports:
+        - containerPort: 8080
+~~~
+
+그리고 hello-deploy.yaml을 이용하여 Deployment 를 생성한다.
+~~~
+$ kubectl create -f hello-deploy.yaml
+deployment.apps/hello created
+~~~
+
+# Service 생성
+
+CLI를 이용해 다음과 같이 Service를 생성할 수 있다.
+~~~
+$ kubectl expose deployment hello --port=8000
+~~~
+
+그리고 역시 yaml 파일을 이용하여 생성할 수도 있다.
+
+hello-service.yaml
+~~~
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-service
+  labels:
+    run: hello
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    protocol: TCP
+  selector:
+    run: hello
+~~~
+
+hello-service.yaml 파일을 이용하여 Service를 생성한다.
+~~~
+$ kubectl create -f hello.yaml
+deployment.apps/hello created
+~~~
+
+# Deployment, Service 동시 생성
+
+yaml 을 이용하면 한번에 두 객체를 생성할 수 있다.  
+단순히 두 yaml 을 합치기만 하면 된다.
+
+hello.yaml
+~~~
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: hello-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: hello
+    spec:
+      containers:
+      - name: hello
+        image: jonggyou/hello:latest
+        ports:
+        - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-service
+  labels:
+    run: hello
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    protocol: TCP
+  selector:
+    run: hello
+~~~
+
+마찬가지로 create 옵션을 사용한다.
+~~~
+$ kubectl create -f hello.yaml 
+
+deployment.apps/hello-deployment created
+service/hello-service created
+~~~
+
+# 서비스 접근하기
+
+현재 Service를 삺펴보면
+~~~
+$ kubectl get svc
+
+NAME            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+hello-service   NodePort    10.110.201.142   <none>        8080:32316/TCP   7s
+kubernetes      ClusterIP   10.96.0.1        <none>        443/TCP          10s
+~~~
+
+hello-service 가 32316 포트로 접근이 가능하다.
+
+VM의 minikube는 다른 VM을 사용하고 있지 않으므로 로컬에서 접속이 가능하다.
+
+~~~
+$ curl localhost:32316
+Hello World
+~~~
+
+
+# 전체 객체 보기
+
+일반적으로 현재 상태를 보기 위해서 다음의 명령들을 내린다.
+~~~
+$ kubectl get service
+$ kubectl get po
+$ kubectl get deployment
+$ kubectl get rc
+~~~
+
+이를 한꺼번에 보기 위해서 다음과 같이 명령한다.
+~~~
+$ kubectl get all
+
+NAME                                    READY   STATUS    RESTARTS   AGE
+pod/hello-deployment-769d4b96f5-mcgkd   1/1     Running   0          2m12s
+
+NAME                    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+service/hello-service   NodePort    10.110.201.142   <none>        8080:32316/TCP   2m12s
+service/kubernetes      ClusterIP   10.96.0.1        <none>        443/TCP          2m15s
+
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/hello-deployment   1/1     1            1           2m12s
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/hello-deployment-769d4b96f5   1         1         1       2m12s
+~~~
+
+
+# Scale out
+
+현재의 Deployment 상태를 보면 다음과 같다.
+~~~
+$ kubectl get deployment
+
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+hello-deployment   1/1     1            1           56m
+~~~
+
+이것은 서버가 한개라는 의미이고 여러개의 서버를 둘 수 있다.  
+3개의 서버로 늘려본다.
+~~~
+$ kubectl scale deployment/hello-deployment --replicas=3
+deployment.extensions/hello-deployment scaled
+~~~
+
+다시 Deployment를 확인하면 다음과 같이 3개가 되었음을 알 수 있다.
+~~~
+$ kubectl get deployment
+
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+hello-deployment   3/3     3            3           61m
+~~~
+
+3개의 deployment가 있다는 것은 pod이 3개임을 의미한다.
+~~~
+$ kubectl get pod
+
+NAME                                READY   STATUS    RESTARTS   AGE
+hello-deployment-769d4b96f5-552ff   1/1     Running   0          2m34s
+hello-deployment-769d4b96f5-mcgkd   1/1     Running   0          62m
+hello-deployment-769d4b96f5-t6fq4   1/1     Running   0          2m34s
+~~~
+보는 바와 같이 pod 이 3개가 있다.
+
+다시 전체 리소스를 보면 다음과 같다.
+~~~
+$ kubectl get all
+NAME                                    READY   STATUS    RESTARTS   AGE
+pod/hello-deployment-769d4b96f5-552ff   1/1     Running   0          15s
+pod/hello-deployment-769d4b96f5-mcgkd   1/1     Running   0          60m
+pod/hello-deployment-769d4b96f5-t6fq4   1/1     Running   0          15s
+
+NAME                    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+service/hello-service   NodePort    10.110.201.142   <none>        8080:32316/TCP   60m
+service/kubernetes      ClusterIP   10.96.0.1        <none>        443/TCP          60m
+
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/hello-deployment   3/3     3            3           60m
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/hello-deployment-769d4b96f5   3         3         3       60m
+~~~
+
+서비스는 여전히 한개이지만, 3개의 POD으로 포워딩 할 것이다. 확인을 해 보도록 한다.
+~~~
+$ curl http://localhost:32316
+Hello World!hello-deployment-769d4b96f5-552ff
+
+$ curl http://localhost:32316
+Hello World!hello-deployment-769d4b96f5-t6fq4
+
+$ curl http://localhost:32316
+Hello World!hello-deployment-769d4b96f5-t6fq4
+
+$ curl http://localhost:32316
+Hello World!hello-deployment-769d4b96f5-t6fq4
+
+$ curl http://localhost:32316
+Hello World!hello-deployment-769d4b96f5-t6fq4
+
+$ curl http://localhost:32316
+Hello World!hello-deployment-769d4b96f5-mcgkd
+
+$ curl http://localhost:32316
+Hello World!hello-deployment-769d4b96f5-t6fq4
+
+$ curl http://localhost:32316
+Hello World!hello-deployment-769d4b96f5-mcgkd
+
+$ curl http://localhost:32316
+Hello World!hello-deployment-769d4b96f5-mcgkd
+~~~
+위의 결과와 같이 다른 hostname 이 출력됨을 알 수 있다.
+
+
+
+# Label
+
+## kubectl get po --show-labels
+## kubectl get po -l app,mode
+## #kubectl get po -l app=account
+## kubectl get po -l '!mode'
+
+## kubectl label po hello-world app=ui
+## kubectl label po hello-world app=ui --overwrite
+## kubectl label node oke-hellow-123-481274-hokf gpu=true
+## kubectl get nodes -l gpu=true
+## kubectl delete po -l mode=dev
+
+
+# Namespace
+
+## kubectl get ns
+## kubectl get po --namespace myns
+## kubectl get po -n myns
+
+## kubectl create namespace myns
+## kubectl delete ns myns
+## kubectl create -f hello-world.yaml -n test-namespace
+## kubectl get po -n test
+
+
+## kubectl delete all --all
+## kubectl delete all --all -n myns
 
 # kubectl create -f myrc.yaml
 # kubectl get rc
 # kubectl edit rc myrc
-# kubectl scale rc myrc --replicas=10
+
 # kubectl delete rc myrc
 # kubectl delete rc myrc --cascade=false
-
-
-# kubectl get rs
-
-# kubectl create -f myservice.yaml
-# kubectl get svc
-# kubectl get endpoints myservice
-# kubectl delete svc myservice
 

@@ -566,3 +566,51 @@ AH00558: httpd: Could not reliably determine the server's fully qualified domain
 ~~~
 
 컨테이너에서 발생하는 로그나 오류메시지를 볼 때 사용된다.
+
+
+# hello 이미지 만들어서 레지스트리에 올리기
+
+hello 디렉토리를 만들고 node.js 로 동작하는 샘플을 만들어 보도록 한다.
+
+~~~
+$ mkdir hello
+$ cd hello
+~~~
+
+server.js
+~~~
+
+var http = require('http');
+var os = require('os');
+
+var handleRequest = function(request, response) {
+  console.log('Received request for URL: ' + request.url);
+  response.writeHead(200);
+  response.end('Hello World!' + os.hostname());
+};
+var www = http.createServer(handleRequest);
+www.listen(8080);
+~~~
+
+Dockerfile
+~~~
+FROM node:6.14.2
+EXPOSE 8080
+COPY server.js .
+CMD node server.js
+~~~
+
+hello 이미지를 만든다. (개인의 docker hub 아이디를 쓴다.)
+~~~
+$ docker build -t {docker.com username}/hello .
+~~~
+
+레지스트리 등록한다. (push가 되지 않으면 로그인을 먼저 한다)
+~~~
+$ docker push {docker.com username}/hello
+~~~
+
+
+
+
+

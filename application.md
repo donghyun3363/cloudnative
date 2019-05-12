@@ -344,4 +344,5 @@ Jenkinsfile을 github에서 읽도록 pipeline에서 설정을 했기 때문에 
 
 # 쿠버네티스에 애플리케이션 배포
 
+
 # 스케일 아웃
