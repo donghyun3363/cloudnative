@@ -120,6 +120,7 @@ Jenkins Pipeline은 복잡한 전달 파이프 라인을 "코드"로 모델링 �
     ![](images/jenkins13.png)
 
 1. 로그의 내용을 면 Jenkinsfile 에서 정의한 "npm --version"이 수행되었음을 알 수 있다.
+
     ~~~
     ...
     + docker inspect -f . node:6.3
