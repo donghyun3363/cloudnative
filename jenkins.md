@@ -150,7 +150,7 @@ Jenkins Pipeline은 복잡한 전달 파이프 라인을 "코드"로 모델링 �
     Finished: SUCCESS
 
     ~~~
-    
+
 
     
 
@@ -187,7 +187,9 @@ Jenkins Pipeline은 복잡한 전달 파이프 라인을 "코드"로 모델링 �
     ~~~
 
 1. Console Log를 살펴보면 다음과 같이 명령한 모든 스텝들이 수행되었음을 알 수 있다.
+
     ~~~
+
     + echo Hello World
     Hello World
     [Pipeline] sh
@@ -223,6 +225,7 @@ Jenkins Pipeline은 복잡한 전달 파이프 라인을 "코드"로 모델링 �
     [Pipeline] // node
     [Pipeline] End of Pipeline
     Finished: SUCCESS
+    
     ~~~
 
 1. Pipeline의 각 step은 다음과 같이 보여진다.
