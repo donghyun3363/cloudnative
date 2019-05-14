@@ -589,13 +589,14 @@ var handleRequest = function(request, response) {
   response.end('Hello World!' + os.hostname());
 };
 var www = http.createServer(handleRequest);
-www.listen(8080);
+www.listen(8000);
+console.log(os.hostname() + " Server listening..");
 ~~~
 
 Dockerfile
 ~~~
-FROM node:6.14.2
-EXPOSE 8080
+FROM node:8
+EXPOSE 8000
 COPY server.js .
 CMD node server.js
 ~~~
@@ -603,6 +604,10 @@ CMD node server.js
 hello 이미지를 만든다. (개인의 docker hub 아이디를 쓴다.)
 ~~~
 $ docker build -t {docker.com username}/hello .
+
+or
+
+$ docker build -t {docker.com username}/hello -f Dockerfile .
 ~~~
 
 레지스트리 등록한다. (push가 되지 않으면 로그인을 먼저 한다)
